@@ -208,6 +208,8 @@ spec:
 ## 4. Baseline RL Metrics & Performance Report
 
 ### A. Reinforcement Learning Performance Summary
+*(Note: The performance below is only for reference with some sample configs set to understand what scores are outputted as part of maxtext default settings. This can be updated later further with more advanced settings to get better performance.)*
+
 From 24 evaluated rollout completions across RL iterations on TPU v7x:
 
 | Metric | Measured Baseline | Notes |
@@ -218,16 +220,7 @@ From 24 evaluated rollout completions across RL iterations on TPU v7x:
 | **Post-RL Eval Accuracy** | **`40.0% – 60.0%`** | Held-out 5-question evaluation pass |
 | **Post-RL Mean Reward** | **`0.4600 – 0.6800`** | Verification score on test set |
 
-### B. Hardware Throughput & MFU Analysis
-* **Hardware Topology**: 1 VM with 4 TPU v7 Chips (8 Tensor Cores total, 2 cores/chip)
-* **Theoretical Peak (BF16)**: **`9,228.0 TFLOPs/s`** (2,307.0 TFLOPs/s per chip)
-* **Measured Step Time**: `6.51 s/step` (includes rollout sampling + reference forward + policy gradient backward + weight resharding)
-* **Total FLOPs per Step**: `164.45 TFLOPs`
-* **Achieved Throughput**: `25.26 TFLOPs/s` (`6.32 TFLOPs/chip`)
-* **Baseline MFU**: `0.27%` (with minimal batch size `1 prompt x 2 gens x 1024 ctx`).
-  > **Note on Scaling**: Increasing `per_device_batch_size=8` or `16` and `num_generations=8` increases TPU MXU matrix utilization to production ranges (**35% – 52% MFU**).
-
-### C. Running the MFU Calculator (Post-Training)
+### B. Running the MFU Calculator (Post-Training)
 The customer runs `calculate_mfu.py` **after training finishes** to evaluate their hardware efficiency based on the measured step time from their run logs:
 
 ```bash
@@ -244,7 +237,7 @@ python3 calculate_mfu.py \
   --step-time 4.2
 ```
 
-### D. Sample Rollout Execution Trace
+### C. Sample Rollout Execution Trace
 ```text
 Question: Maria has 4 dimes, 4 quarters, and 7 nickels in her piggy bank. Her mom gives her 5 quarters. How much money, in dollars, does Maria have now?
 Ground Truth: 3
