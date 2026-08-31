@@ -44,16 +44,33 @@ python3 -m maxtext.trainers.post_train.rl.train_rl maxtext/configs/post_train/rl
   gradient_clipping_threshold=1.0 \
   checkpoint_period=100 \
   log_period=10 \
-  batch_size=768 \
-  train_micro_batch_size=16 \
-  max_target_length=1024 \
-  max_prefill_predict_length=512 \
-  rl.num_generations=8 \
-  rl.grpo_beta=0.001 \
-  rl.grpo_epsilon=0.2 \
+  batch_size=48 \
+  train_micro_batch_size=8 \
+  rollout_micro_batch_size=16 \
+  max_prefill_predict_length=2900 \
+  max_target_length=3412 \
+  num_generations=8 \
+  grpo_beta=0.001 \
+  grpo_epsilon=0.2 \
   weight_dtype=bfloat16 \
+  num_test_batches=0 \
   eval_interval=0
 ```
+
+### Critical Translation "Gotchas"
+
+**1. Batch Size Counts Prompts, Not Completions**
+* **TRL**: `per_device_train_batch_size` counts **completions**. (e.g. 16 completions * 6 grad accum * 4 GPUs = 384 total completions. 384 / 8 generations = 48 unique prompts).
+* **MaxText**: `batch_size` counts **unique prompts**. MaxText/Tunix repeats each prompt `num_generations` times. To get H200 parity with 384 completions, you must set `batch_size=48` (48 prompts x 8 generations = 384 completions). Setting `batch_size=384` would result in 3,072 completions per step and cause an immediate Out of Memory (OOM) error.
+
+**2. Sequence Length Padding causes OOMs**
+* **TRL**: Dynamically pads to the batch max. You can set a high `max_prompt_length` and it only uses what it needs.
+* **MaxText**: Statically left-pads *every* prompt to `max_prefill_predict_length`. Every sequence in the reference log-prob pass is padded to exactly `max_target_length`. If you blindly set `max_target_length=8192`, it doubles the `[B, T, V]` logits tensor and causes an HBM OOM. 
+  * *Formula*: `max_target_length` = `max_prefill_predict_length` + `completion length`. Keep these as tight to your dataset max as possible (e.g. 2900 + 512 = 3412).
+
+**3. train_micro_batch_size determines Accumulation Steps**
+* If left unset, it falls back to `batch_size`. Running 48 prompts x 8 generations = 384 sequences in one logps pass will cause an immediate HBM OOM. Set it explicitly (e.g. `8`) so it processes `8 x 8 = 64` sequences per pass. This controls accumulation granularity.
+
 
 *(Note on Lengths: `max_target_length` in MaxText is the total sequence length. If your max prompt is 512 and your max completion is 512, set `max_prefill_predict_length=512` and `max_target_length=1024`)*.
 
