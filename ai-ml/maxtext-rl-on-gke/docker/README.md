@@ -113,7 +113,7 @@ In MaxText RL/GRPO, a single TPU slice (e.g. `2x2x1` topology with 1 VM, 4 TPU c
 
 ## 3. Production Kubernetes JobSet Manifest
 
-> **Note**: Replace placeholders (such as `<YOUR_REGION>`, `<YOUR_PROJECT_ID>`, `<YOUR_REPO_NAME>`, and `<YOUR_CHECKPOINT_PVC_NAME>`) with your specific cluster and Artifact Registry values before deploying. You can also template this manifest and substitute variables using tools like `envsubst` (e.g. `envsubst < jobset.yaml | kubectl apply -f -`).
+> **Note**: Replace placeholders (such as `<YOUR_REGION>`, `<YOUR_PROJECT_ID>`, `<YOUR_REPO_NAME>`, and `<YOUR_CHECKPOINT_PVC_NAME>`) with your specific cluster and Artifact Registry values before deploying. The key image will have the container that we have built in previous step.
 
 ```yaml
 apiVersion: jobset.x-k8s.io/v1alpha2

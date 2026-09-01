@@ -14,13 +14,13 @@ Place `custom_rewards.py` directly alongside your dataset or checkpoint director
 * **Container Path (via PVC mount)**: `/checkpoint/scripts/custom_rewards.py` or `/data/custom_rewards.py`
 
 ### Option B: Mount via Kubernetes ConfigMap (No GCS upload required)
-Create a Kubernetes ConfigMap containing your Python reward script:
+Create a Kubernetes ConfigMap containing your Python reward script, run this command on your terminal:
 ```bash
 kubectl create configmap grpo-custom-rewards \
   --from-file=custom_rewards.py=./custom_rewards.py \
   --namespace=default
 ```
-And mount the ConfigMap in your JobSet:
+Once the configmap is created we can mount the ConfigMap in your JobSet YAML file as a volume mount:
 ```yaml
 volumeMounts:
 - name: reward-script-volume
