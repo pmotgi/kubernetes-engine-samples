@@ -53,7 +53,7 @@ gcloud container node-pools create ${NODEPOOL_NAME} \
 ```
 
 #### 2. Apply the Kueue Configuration
-Update `<CUSTOMER_NODEPOOL_NAME>` in `kueue-tpu7x-2x2x1-setup.yaml` and apply:
+Update `<USER_NODEPOOL_NAME>` in `kueue-tpu7x-2x2x1-setup.yaml` and apply:
 ```bash
 kubectl apply -f kueue-tpu7x-2x2x1-setup.yaml
 ```

@@ -52,7 +52,7 @@ spec:
             serviceAccountName: workload-identity-k8s-sa
             automountServiceAccountToken: true
             nodeSelector:
-              cloud.google.com/gke-nodepool: <CUSTOMER_NODEPOOL_NAME>
+              cloud.google.com/gke-nodepool: <USER_NODEPOOL_NAME>
               cloud.google.com/gke-tpu-accelerator: tpu7x
             tolerations:
             - key: google.com/tpu

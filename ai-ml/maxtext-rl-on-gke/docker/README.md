@@ -6,7 +6,7 @@ This repository provides the production Docker container recipe, compatibility p
 
 ## 1. Quick Start: Build the Production Container
 
-> **Note for Customers**: This container build is **completely standalone** and builds directly from public sources (`python:3.12-slim-bookworm` with GCC 12.2 C++20 toolchain and the official public [Google MaxText GitHub repository](https://github.com/google/maxtext)). It requires **zero access** to any internal or restricted repositories.
+> **Note for Users**: This container build is **completely standalone** and builds directly from public sources (`python:3.12-slim-bookworm` with GCC 12.2 C++20 toolchain and the official public [Google MaxText GitHub repository](https://github.com/google/maxtext)). It requires **zero access** to any internal or restricted repositories.
 
 All dependencies, Triton uninstallation, PyTorch 2.6 schema fixes, Protobuf collision mocks, and TPU v7 Pallas Ragged Paged Attention (RPA) VMEM tile adjustments are executed automatically during the build:
 - `Dockerfile`: Standalone container recipe (clones public MaxText if building from scratch).
@@ -152,7 +152,7 @@ spec:
             automountServiceAccountToken: true
             nodeSelector:
               cloud.google.com/gke-accelerator-count: '4'
-              cloud.google.com/gke-nodepool: <CUSTOMER_NODEPOOL_NAME>
+              cloud.google.com/gke-nodepool: <USER_NODEPOOL_NAME>
               cloud.google.com/gke-tpu-accelerator: tpu7x
               cloud.google.com/gke-tpu-topology: 2x2x1
               cloud.google.com/gke-spot: 'true'
@@ -226,7 +226,7 @@ From 24 evaluated rollout completions across RL iterations on TPU v7x:
 | **Post-RL Mean Reward** | **`0.4600 – 0.6800`** | Verification score on test set |
 
 ### B. Running the MFU Calculator (Post-Training)
-The customer runs `calculate_mfu.py` **after training finishes** to evaluate their hardware efficiency based on the measured step time from their run logs:
+Users can run `calculate_mfu.py` **after training finishes** to evaluate their hardware efficiency based on the measured step time from their run logs:
 
 ```bash
 # 1. Run with default measured benchmark baseline
@@ -267,7 +267,7 @@ Extracted: 3.00 | Reward: 1.0 | Format: Valid
 
 ## 5. Built-in Technical Fixes (Executed Automatically at Build Time)
 
-> **Customer Notice**: You do **NOT** need to run any patch scripts manually. `patch_tpu_v7.py` and `install_deps.py` are automatically executed as intermediate build steps inside the `Dockerfile`.
+> **User Notice**: You do **NOT** need to run any patch scripts manually. `patch_tpu_v7.py` and `install_deps.py` are automatically executed as intermediate build steps inside the `Dockerfile`.
 
 1. **TPU v7 VMEM SRAM Overflow Fix**:
    - `tpu_inference` RPA kernel hardcoded tile sizes demanding 64.21 MB (exceeding TPU v7's 64.00 MB core SRAM limit).

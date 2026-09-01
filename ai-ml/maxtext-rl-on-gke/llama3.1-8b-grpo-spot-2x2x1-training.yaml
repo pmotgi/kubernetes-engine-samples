@@ -50,7 +50,7 @@ spec:
             automountServiceAccountToken: true
             nodeSelector:
               cloud.google.com/gke-accelerator-count: '4'
-              cloud.google.com/gke-nodepool: <CUSTOMER_NODEPOOL_NAME>
+              cloud.google.com/gke-nodepool: <USER_NODEPOOL_NAME>
               cloud.google.com/gke-tpu-accelerator: tpu7x
               cloud.google.com/gke-tpu-topology: 2x2x1
               cloud.google.com/gke-spot: 'true'

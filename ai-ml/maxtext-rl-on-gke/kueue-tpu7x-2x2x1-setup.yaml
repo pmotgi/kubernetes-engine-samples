@@ -19,7 +19,7 @@ metadata:
 spec:
   nodeLabels:
     cloud.google.com/gke-tpu-accelerator: tpu7x
-    cloud.google.com/gke-nodepool: <CUSTOMER_NODEPOOL_NAME>
+    cloud.google.com/gke-nodepool: <USER_NODEPOOL_NAME>
   tolerations:
   - key: google.com/tpu
     operator: Equal
