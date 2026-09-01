@@ -50,7 +50,7 @@ spec:
             automountServiceAccountToken: true
             nodeSelector:
               cloud.google.com/gke-accelerator-count: '4'
-              cloud.google.com/gke-nodepool: tpu-v7x-spot-2x2x1
+              cloud.google.com/gke-nodepool: <CUSTOMER_NODEPOOL_NAME>
               cloud.google.com/gke-tpu-accelerator: tpu7x
               cloud.google.com/gke-tpu-topology: 2x2x1
               cloud.google.com/gke-spot: 'true'
@@ -60,7 +60,7 @@ spec:
               effect: NoSchedule
             containers:
             - name: lora-trainer
-              image: us-east5-docker.pkg.dev/northam-ce-mlai-tpu/pmotgi-vlm-poc-repo/my-maxtext-runner:grpo-v2
+              image: <YOUR_REGION>-docker.pkg.dev/<YOUR_PROJECT_ID>/<YOUR_REPO_NAME>/maxtext-grpo-runner:v2
               securityContext:
                 privileged: true
                 runAsUser: 0
@@ -103,4 +103,4 @@ spec:
                 medium: Memory
             - name: gcs-input
               persistentVolumeClaim:
-                claimName: checkpoint-data-pmotgi-tpu-v7x-04a179d1-pvc
+                claimName: <YOUR_CHECKPOINT_PVC_NAME>

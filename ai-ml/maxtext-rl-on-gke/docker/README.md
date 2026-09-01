@@ -14,7 +14,7 @@ All dependencies, Triton uninstallation, PyTorch 2.6 schema fixes, Protobuf coll
 - `patch_tpu_v7.py`: TPU v7 VMEM reduction (`64.2 MB -> ~18 MB`), Protobuf mock, and PyTorch typing patches.
 
 ### Option A: Using Google Cloud Build (Recommended)
-Run the following commands inside `training-grpo/docker/`:
+Run the following commands inside this directory (`ai-ml/maxtext-rl-on-gke/docker/`):
 ```bash
 # 1. Configure your GCP project and Artifact Registry details
 export PROJECT_ID="YOUR_GCP_PROJECT_ID"
@@ -63,16 +63,19 @@ docker push ${IMAGE_TAG}
 If your organization already maintains a base MaxText runner image, you can pass `--build-arg BASEIMAGE=...` to skip the initial setup step:
 
 ```bash
-# Via Cloud Build:
+# 1. Define your base image variable
+export BASE_IMAGE="YOUR_EXISTING_MAXTEXT_IMAGE"
+
+# 2. Build via Cloud Build:
 gcloud builds submit . \
   --tag="${IMAGE_TAG}" \
-  --build-arg BASEIMAGE="YOUR_EXISTING_MAXTEXT_IMAGE" \
+  --build-arg BASEIMAGE="${BASE_IMAGE}" \
   --machine-type="e2-highcpu-8" \
   --project="${PROJECT_ID}" \
   --region="${REGION}"
 
-# Or via Local Docker:
-docker build --build-arg BASEIMAGE="YOUR_EXISTING_MAXTEXT_IMAGE" -t ${IMAGE_TAG} .
+# Or build via Local Docker:
+docker build --build-arg BASEIMAGE="${BASE_IMAGE}" -t ${IMAGE_TAG} .
 docker push ${IMAGE_TAG}
 ```
 
@@ -109,6 +112,8 @@ In MaxText RL/GRPO, a single TPU slice (e.g. `2x2x1` topology with 1 VM, 4 TPU c
 ---
 
 ## 3. Production Kubernetes JobSet Manifest
+
+> **Note**: Replace placeholders (such as `<YOUR_REGION>`, `<YOUR_PROJECT_ID>`, `<YOUR_REPO_NAME>`, and `<YOUR_CHECKPOINT_PVC_NAME>`) with your specific cluster and Artifact Registry values before deploying. You can also template this manifest and substitute variables using tools like `envsubst` (e.g. `envsubst < jobset.yaml | kubectl apply -f -`).
 
 ```yaml
 apiVersion: jobset.x-k8s.io/v1alpha2
@@ -147,7 +152,7 @@ spec:
             automountServiceAccountToken: true
             nodeSelector:
               cloud.google.com/gke-accelerator-count: '4'
-              cloud.google.com/gke-nodepool: tpu-v7x-spot-2x2x1
+              cloud.google.com/gke-nodepool: <CUSTOMER_NODEPOOL_NAME>
               cloud.google.com/gke-tpu-accelerator: tpu7x
               cloud.google.com/gke-tpu-topology: 2x2x1
               cloud.google.com/gke-spot: 'true'
@@ -157,7 +162,7 @@ spec:
               effect: NoSchedule
             containers:
             - name: lora-trainer
-              image: us-east5-docker.pkg.dev/YOUR_PROJECT/YOUR_REPO/maxtext-grpo-runner:v2
+              image: <YOUR_REGION>-docker.pkg.dev/<YOUR_PROJECT_ID>/<YOUR_REPO_NAME>/maxtext-grpo-runner:v2
               securityContext:
                 privileged: true
                 runAsUser: 0
@@ -200,7 +205,7 @@ spec:
                 medium: Memory
             - name: gcs-input
               persistentVolumeClaim:
-                claimName: YOUR_CHECKPOINT_PVC_NAME
+                claimName: <YOUR_CHECKPOINT_PVC_NAME>
 ```
 
 ---

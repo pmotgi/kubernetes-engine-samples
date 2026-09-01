@@ -140,7 +140,8 @@ MaxText's built-in processor automatically reads:
 
 ## 5. Kubernetes JobSet Configuration
 
-Update lines 71–85 in your JobSet manifest ([`llama3.1-8b-grpo-dws-2x2x1-training.yaml`](file:///Users/pmotgi/exploration/cerence/training-grpo/llama3.1-8b-grpo-dws-2x2x1-training.yaml)):
+Update lines 71–85 in your JobSet manifest ([`llama3.1-8b-grpo-dws-2x2x1-training.yaml`](llama3.1-8b-grpo-dws-2x2x1-training.yaml)):
+> **Note**: Remember to replace all placeholders enclosed in `<...>` (e.g. `<YOUR_REGION>`, `<YOUR_PROJECT_ID>`, `<YOUR_REPO_NAME>`, `<YOUR_CHECKPOINT_PVC_NAME>`, and `<YOUR_DATASET_PVC_NAME>`) with your actual configuration values.
 
 ```yaml
             volumeMounts:
@@ -201,7 +202,7 @@ Update lines 71–85 in your JobSet manifest ([`llama3.1-8b-grpo-dws-2x2x1-train
 
 When you submit the job:
 ```bash
-kubectl apply -f training-grpo/llama3.1-8b-grpo-dws-2x2x1-training.yaml
+kubectl apply -f llama3.1-8b-grpo-dws-2x2x1-training.yaml
 ```
 
 Check the trainer pod logs to verify that MaxText has detected and loaded your custom reward functions:
